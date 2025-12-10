@@ -19,12 +19,14 @@ class Model {
     data class Game(
         val date: String = "",
         val opponent: String = "",
+        var outcome: String? = "",
         // trick to get around the '/' in firebase column name
         // NOTE: I should have stored this in a better way, but retrieving the data was a pain and
         // this was the easiest way I could think of storing it quickly
         @get:PropertyName("outcome/time")
         @set:PropertyName("outcome/time")
-        var outcomeOrTime: String? = ""
+        var outcomeOrTime: String? = "",
+        var time: String? = ""
     )
 
     // instances of our basketball related data
@@ -82,7 +84,7 @@ class Model {
             }
 
             this.schedule = games
-            Log.w("Model", this.schedule.size.toString())
+            Log.w("Model", this.schedule.toString())
         }.addOnFailureListener { e ->
             Log.e("MainActivity", "Error loading schedule", e)
             this.schedule = emptyList()
