@@ -1,6 +1,8 @@
 package com.example.groupproject
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.widget.ArrayAdapter
@@ -41,10 +43,15 @@ class MainActivity : AppCompatActivity() {
     // selected team name
     private lateinit var selectedName : String
 
+    // shared preferences for persistent storage
+    private lateinit var pref : SharedPreferences
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
+
+        pref = getSharedPreferences(packageName + "_preferences", Context.MODE_PRIVATE)
 
         // 1. Get view references
         teamSelection = findViewById(R.id.teamSelection)
@@ -77,6 +84,9 @@ class MainActivity : AppCompatActivity() {
     private fun onSubmit() {
         val selectedTeam = teams.find { it.name == selectedName }
         if (selectedTeam != null) {
+            // save selected team to preferences
+            pref.edit().putString("selectedTeamName", selectedName).apply()
+            
             // You now have the full Team object with the document ID
             val intent = Intent(this, TeamActivity::class.java)
             intent.putExtra("teamName", selectedTeam.name)
@@ -115,6 +125,18 @@ class MainActivity : AppCompatActivity() {
         )
 
         teamSelection.setAdapter(adapter)
+        
+        // restore saved team selection
+        val savedTeam = pref.getString("selectedTeamName", "") ?: ""
+        if (savedTeam != "" && teamNames.contains(savedTeam)) {
+            teamSelection.setText(savedTeam, false)
+            selectedName = savedTeam
+            val selectedTeam = teams.find { it.name == savedTeam }
+            if (selectedTeam != null) {
+                submitButton.isEnabled = true
+                model = Model(selectedTeam.id)
+            }
+        }
     }
 
 }
