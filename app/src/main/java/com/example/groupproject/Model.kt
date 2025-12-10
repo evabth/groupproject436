@@ -64,6 +64,7 @@ class Model {
             }
 
             this.roster = players
+            Model.roster = players
             Log.w("Model", this.roster.size.toString())
         }.addOnFailureListener { e ->
             Log.e("MainActivity", "Error loading roster", e)
@@ -82,11 +83,18 @@ class Model {
             }
 
             this.schedule = games
+            Model.schedule = games
             Log.w("Model", this.schedule.size.toString())
+            Log.w("Model", this.schedule.toString())
         }.addOnFailureListener { e ->
             Log.e("MainActivity", "Error loading schedule", e)
             this.schedule = emptyList()
         }
+    }
+
+    companion object {
+        var schedule: List<Game> = emptyList()
+        var roster: List<Player> = emptyList()
     }
 
 }
