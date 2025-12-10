@@ -17,6 +17,7 @@ import com.google.firebase.firestore.IgnoreExtraProperties
 class MainActivity : AppCompatActivity() {
 
     data class Team(
+        val id: String = "",           // Document ID from Firestore
         val abbreviation: String = "",
         val city: String = "",
         val conference: String = "",
@@ -30,6 +31,12 @@ class MainActivity : AppCompatActivity() {
 
     // Firestore instance
     private lateinit var db: FirebaseFirestore
+
+    // reference to our model class
+    private lateinit var model : Model
+
+    // list of all of our teams
+    private lateinit var teams : List<Team>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,36 +55,36 @@ class MainActivity : AppCompatActivity() {
             setupTeamDropdown(teams)
         }
 
+        // Set up functionality for the submit button
+        submitButton.setOnClickListener { onSubmit() }
+
+    }
+
+    private fun onSubmit() {
+        val selectedName = teamSelection.text.toString()
+
+        val selectedTeam = teams.find { it.name == selectedName }
+
+        if (selectedTeam != null) {
+            // You now have the full Team object with the document ID
+            model = Model(selectedTeam.id)
+        } else {
+            // Handle invalid choice (user typed something random)
+            Toast.makeText(this, "Please select a valid team", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun loadTeams(onLoaded: (List<Team>) -> Unit) {
-        // First, test fetching a single document directly
-        db.collection("teams").document("1").get()
-            .addOnSuccessListener { doc ->
-                Log.d("MainActivity", "Single doc test - exists: ${doc.exists()}")
-                Log.d("MainActivity", "Single doc test - data: ${doc.data}")
-            }
-            .addOnFailureListener { e ->
-                Log.e("MainActivity", "Single doc test failed", e)
-            }
-
-        // Now fetch all teams
+        // fetch all teams
         db.collection("teams")
             .get()
             .addOnSuccessListener { snapshot ->
-                Log.d("MainActivity", "Snapshot isEmpty: ${snapshot.isEmpty}")
-                Log.d("MainActivity", "Snapshot size: ${snapshot.size()}")
-                Log.d("MainActivity", "Snapshot isFromCache: ${snapshot.metadata.isFromCache}")
-                Log.d("MainActivity", "Raw documents: ${snapshot.documents}")
-                
+
                 val teams = snapshot.documents.mapNotNull { doc ->
-                    Log.d("MainActivity", "Doc ID: ${doc.id}, Data: ${doc.data}")
-                    val team = doc.toObject(Team::class.java)
-                    Log.d("MainActivity", "Loaded team: $team")
-                    team
+                    doc.toObject(Team::class.java)?.copy(id = doc.id)
                 }
-                Log.d("MainActivity", "Total teams loaded: ${teams.size}")
                 onLoaded(teams)
+                this.teams = teams
             }
             .addOnFailureListener { e ->
                 Log.e("MainActivity", "Error loading teams", e)
