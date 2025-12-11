@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.widget.ArrayAdapter
+import android.widget.LinearLayout
 import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.Toast
@@ -13,7 +14,9 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.IgnoreExtraProperties
-
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdSize
+import com.google.android.gms.ads.AdView
 
 @IgnoreExtraProperties
 class MainActivity : AppCompatActivity() {
@@ -45,6 +48,7 @@ class MainActivity : AppCompatActivity() {
 
     // shared preferences for persistent storage
     private lateinit var pref : SharedPreferences
+    private lateinit var adView : AdView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,6 +82,21 @@ class MainActivity : AppCompatActivity() {
 
         // Set up functionality for the submit button
         submitButton.setOnClickListener { onSubmit() }
+
+        adView = AdView( this )
+        var adSize : AdSize = AdSize(AdSize.FULL_WIDTH, AdSize.AUTO_HEIGHT )
+        adView.setAdSize( adSize )
+        var adUnitId : String = "ca-app-pub-3940256099942544/6300978111"
+        adView.adUnitId = adUnitId
+        var builder : AdRequest.Builder = AdRequest.Builder( )
+        builder.addKeyword( "fitness" ).addKeyword( "workout" )
+        var adRequest : AdRequest = builder.build()
+
+        var adLayout : LinearLayout = findViewById<LinearLayout>( R.id.ad_view )
+        adLayout.addView( adView )
+
+        // request the ad to be served by Google
+        adView.loadAd( adRequest )
 
     }
 
