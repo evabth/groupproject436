@@ -11,6 +11,13 @@ import com.google.firebase.firestore.FirebaseFirestore
 class Model {
 
     data class Player(
+        val avg_assists: String? = "",
+        val avg_blocks: String? = "",
+        val avg_minutes: String? = "",
+        val avg_points: String? = "",
+        val avg_rebounds: String? = "",
+        val avg_steals: String? = "",
+        val games_played: String? = "",
         val name: String = "",
         val number: String = "",
         val position: String = "",
