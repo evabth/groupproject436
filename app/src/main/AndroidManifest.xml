@@ -29,6 +29,7 @@
         </activity>
         <activity android:name=".ScheduleActivity" />
         <activity android:name=".TeamActivity" />
+        <activity android:name=".PlayerInfoActivity" />
     </application>
 
 </manifest>

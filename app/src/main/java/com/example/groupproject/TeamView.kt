@@ -1,6 +1,7 @@
 package com.example.groupproject
 
 import android.content.Context
+import android.content.Intent
 import android.view.Gravity
 import android.widget.LinearLayout
 import android.widget.ScrollView
@@ -16,6 +17,22 @@ class TeamView : LinearLayout {
 
     fun setOnPlayerClickListener(listener: (Model.Player) -> Unit) {
         onPlayerClick = listener
+    }
+
+    fun onClick(player: Model.Player) {
+        val intent = Intent(context, PlayerInfoActivity::class.java)
+        intent.putExtra("name", player.name)
+        intent.putExtra("number", player.number)
+        intent.putExtra("position", player.position)
+        intent.putExtra("avg_assists", player.avg_assists)
+        intent.putExtra("avg_blocks", player.avg_blocks)
+        intent.putExtra("avg_minutes", player.avg_minutes)
+        intent.putExtra("avg_points", player.avg_points)
+        intent.putExtra("avg_rebounds", player.avg_rebounds)
+        intent.putExtra("avg_steals", player.avg_steals)
+        intent.putExtra("games_played", player.games_played)
+        context.startActivity(intent)
+
     }
 
     constructor(context: Context, teamName: String, roster: List<Model.Player>) : super(context) {
@@ -58,8 +75,7 @@ class TeamView : LinearLayout {
                 isFocusable = true
 
                 setOnClickListener {
-                    Toast.makeText(context, "Pressed!", Toast.LENGTH_SHORT).show()
-                    //onPlayerClick?.invoke(player)
+                    onClick(player)
                 }
             }
             rosterLayout.addView(playerView)
