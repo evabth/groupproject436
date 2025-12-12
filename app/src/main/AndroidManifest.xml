@@ -20,7 +20,7 @@
             android:value="ca-app-pub-3940256099942544~3347511713"/>
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDAdypW2-0oqMv9eJiiaFsQ72PJ1tCPALE"/>
+            android:value="placeholder"/>
         <activity
             android:name=".MainActivity"
             android:exported="true">

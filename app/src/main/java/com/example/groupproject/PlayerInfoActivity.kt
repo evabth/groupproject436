@@ -1,9 +1,11 @@
 package com.example.groupproject
 
+import android.content.Context
 import android.os.Bundle
 import android.view.Gravity
 import android.widget.Button
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 
@@ -13,7 +15,7 @@ class PlayerInfoActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        val name = intent.getStringExtra("name")
+        val name = intent.getStringExtra("name") ?: ""
         val number = intent.getStringExtra("number")
         val position = intent.getStringExtra("position")
         val avg_assists = intent.getStringExtra("avg_assists")
@@ -26,6 +28,19 @@ class PlayerInfoActivity : AppCompatActivity() {
 
         val playerInfoView = PlayerInfoView(this, name, number, position, avg_assists, avg_blocks, avg_minutes, avg_points, avg_rebounds, avg_steals, games_played)
 
+        // favorite button
+        val pref = getSharedPreferences(packageName + "_preferences", Context.MODE_PRIVATE)
+        val favoriteButton = Button(this)
+        favoriteButton.text = "Favorite"
+        favoriteButton.setOnClickListener {
+            pref.edit().putString("favoritePlayer", name).apply()
+            Toast.makeText(this, "Favorited " + name, Toast.LENGTH_SHORT).show()
+        }
+        val favParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+        favParams.gravity = Gravity.CENTER_HORIZONTAL
+        favParams.topMargin = 16
+        playerInfoView.addView(favoriteButton, favParams)
+
         val backButton = Button(this)
         backButton.text = "Back"
         backButton.setOnClickListener { finish() }
@@ -35,7 +50,5 @@ class PlayerInfoActivity : AppCompatActivity() {
         playerInfoView.addView(backButton, backParams)
 
         setContentView(playerInfoView)
-
-
     }
 }

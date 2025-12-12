@@ -6,12 +6,10 @@ import android.view.Gravity
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
-import android.widget.Toast
 
 class TeamView : LinearLayout {
 
     private var titleText: TextView
-    //private var rosterText: TextView
 
     private var onPlayerClick: ((Model.Player) -> Unit)? = null
 
@@ -35,7 +33,7 @@ class TeamView : LinearLayout {
 
     }
 
-    constructor(context: Context, teamName: String, roster: List<Model.Player>) : super(context) {
+    constructor(context: Context, teamName: String, roster: List<Model.Player>, favoritePlayerName: String?) : super(context) {
         this.orientation = VERTICAL
         this.setPadding(32, 32, 32, 32)
 
@@ -46,26 +44,53 @@ class TeamView : LinearLayout {
         titleText.gravity = Gravity.CENTER
         addView(titleText)
 
-        // roster header
-        var rosterHeader = TextView(context)
-        rosterHeader.text = "Roster"
-        rosterHeader.textSize = 22f
-        rosterHeader.gravity = Gravity.CENTER
-        rosterHeader.setPadding(0, 32, 0, 16)
-        addView(rosterHeader)
-
         // roster list in scroll view
         var scrollView = ScrollView(context)
         var scrollParams = LayoutParams(LayoutParams.MATCH_PARENT, 0, 1f)
 
-        // Changed each player to be it's own text view
-        // this allows us to enable event handling when a player is clicked
         val rosterLayout = LinearLayout(context).apply {
             orientation = VERTICAL
             gravity = Gravity.CENTER_HORIZONTAL
         }
 
+        // find favorite player
+        val favoritePlayer = roster.find { it.name == favoritePlayerName }
+
+        // show favorite player at top if exists
+        if (favoritePlayer != null) {
+            val favHeader = TextView(context).apply {
+                text = "Favorite"
+                textSize = 20f
+                gravity = Gravity.CENTER
+                setPadding(0, 16, 0, 8)
+            }
+            rosterLayout.addView(favHeader)
+
+            val favView = TextView(context).apply {
+                text = "#${favoritePlayer.number} ${favoritePlayer.name} (${favoritePlayer.position})"
+                textSize = 16f
+                gravity = Gravity.CENTER_HORIZONTAL
+                setPadding(0, 8, 0, 8)
+                isClickable = true
+                isFocusable = true
+                setOnClickListener { onClick(favoritePlayer) }
+            }
+            rosterLayout.addView(favView)
+        }
+
+        // roster header
+        var rosterHeader = TextView(context).apply {
+            text = "Roster"
+            textSize = 20f
+            gravity = Gravity.CENTER
+            setPadding(0, 32, 0, 16)
+        }
+        rosterLayout.addView(rosterHeader)
+
+        // rest of roster (excluding favorite)
         for (player in roster) {
+            if (player.name == favoritePlayerName) continue
+            
             val playerView = TextView(context).apply {
                 text = "#${player.number} ${player.name} (${player.position})"
                 textSize = 16f
@@ -73,28 +98,12 @@ class TeamView : LinearLayout {
                 setPadding(0, 8, 0, 8)
                 isClickable = true
                 isFocusable = true
-
-                setOnClickListener {
-                    onClick(player)
-                }
+                setOnClickListener { onClick(player) }
             }
             rosterLayout.addView(playerView)
         }
 
         scrollView.addView(rosterLayout)
         addView(scrollView, scrollParams)
-
-        // ------------------
-        
-        //rosterText = TextView(context)
-        //rosterText.textSize = 16f
-        //rosterText.gravity = Gravity.CENTER_HORIZONTAL
-        //var rosterString = ""
-        //for (player in roster) {
-        //    rosterString += "#" + player.number + " " + player.name + " (" + player.position + ")\n"
-        //}
-        //rosterText.text = rosterString
-        //scrollView.addView(rosterText)
-        //addView(scrollView, scrollParams)
     }
 }
