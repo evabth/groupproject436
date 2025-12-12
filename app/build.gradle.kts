@@ -50,6 +50,7 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.android.gms:play-services-ads:24.4.0")
+    implementation("com.google.android.gms:play-services-maps:19.0.0")
     //implementation(platform("com.google.foirebase:firebase-bom:34.6.0"))
     //implementation("com.google.firebase:firebase-database")
 }

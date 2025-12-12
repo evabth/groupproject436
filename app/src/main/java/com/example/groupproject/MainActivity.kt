@@ -33,6 +33,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var teamSelection : AutoCompleteTextView
     private lateinit var submitButton : Button
+    private lateinit var mapButton : Button
 
     // Firestore instance
     private lateinit var db: FirebaseFirestore
@@ -41,7 +42,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var model : Model
 
     // list of all of our teams
-    private lateinit var teams : List<Team>
+    private var teams : List<Team> = emptyList()
 
     // selected team name
     private lateinit var selectedName : String
@@ -83,6 +84,12 @@ class MainActivity : AppCompatActivity() {
         // Set up functionality for the submit button
         submitButton.setOnClickListener { onSubmit() }
 
+        // Set up map button
+        mapButton = findViewById(R.id.mapButton)
+        mapButton.setOnClickListener {
+            startActivity(Intent(this, MapActivity::class.java))
+        }
+
         adView = AdView( this )
         var adSize : AdSize = AdSize(AdSize.FULL_WIDTH, AdSize.AUTO_HEIGHT )
         adView.setAdSize( adSize )
@@ -98,6 +105,21 @@ class MainActivity : AppCompatActivity() {
         // request the ad to be served by Google
         adView.loadAd( adRequest )
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // reload saved team when coming back from map
+        val savedTeam = pref.getString("selectedTeamName", "") ?: ""
+        if (savedTeam != "" && teams.any { it.name == savedTeam }) {
+            teamSelection.setText(savedTeam, false)
+            selectedName = savedTeam
+            val selectedTeam = teams.find { it.name == savedTeam }
+            if (selectedTeam != null) {
+                submitButton.isEnabled = true
+                model = Model(selectedTeam.id)
+            }
+        }
     }
 
     private fun onSubmit() {

@@ -18,6 +18,9 @@
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-3940256099942544~3347511713"/>
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDAdypW2-0oqMv9eJiiaFsQ72PJ1tCPALE"/>
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -30,6 +33,7 @@
         <activity android:name=".ScheduleActivity" />
         <activity android:name=".TeamActivity" />
         <activity android:name=".PlayerInfoActivity" />
+        <activity android:name=".MapActivity" />
     </application>
 
 </manifest>
